@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>TicTacToe</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
   <style>
@@ -18,9 +18,12 @@
       min-height: 100vh;
       background-color: #f0f0f0;
       font-family: sans-serif;
+      overflow: hidden;
+      touch-action: none;
     }
     canvas {
       display: block;
+      touch-action: none;
     }
   </style>
 </head>
