@@ -1,5 +1,7 @@
 // =============================================================
 // TicTacToe – p5.js implementation
+// 2026-03-02
+// https://openprocessing.org/sketch/2883694
 // =============================================================
 
 // ---- Constants -----------------------------------------------
@@ -52,6 +54,13 @@ const WIN_COMBINATIONS = [
   [2, 4, 6],
 ];
 
+// ---- Responsive Scaling --------------------------------------
+let scaleFactor = 1;
+
+function computeScale() {
+  return Math.min(windowWidth / CANVAS_WIDTH, windowHeight / CANVAS_HEIGHT);
+}
+
 // ---- Game State ----------------------------------------------
 let gameState;
 let isTouchDevice = false;
@@ -63,7 +72,8 @@ let btnHovered    = false;
 // =============================================================
 
 function setup() {
-  createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+  scaleFactor = computeScale();
+  createCanvas(CANVAS_WIDTH * scaleFactor, CANVAS_HEIGHT * scaleFactor);
   textFont('monospace');
   isTouchDevice = detectTouch();
   initializeGame();
@@ -71,10 +81,16 @@ function setup() {
 
 function draw() {
   background(COLOR_BACKGROUND);
+  scale(scaleFactor);
   drawBoard();
   drawMarks();
   drawStatus();
   drawResetButton();
+}
+
+function windowResized() {
+  scaleFactor = computeScale();
+  resizeCanvas(CANVAS_WIDTH * scaleFactor, CANVAS_HEIGHT * scaleFactor);
 }
 
 // =============================================================
@@ -154,10 +170,17 @@ function resetGame() {
 // Coordinate helpers
 // =============================================================
 
+// Convert canvas pixel coords (from mouse/touch) to logical game coords
+function toLogical(canvasCoord) {
+  return canvasCoord / scaleFactor;
+}
+
 function cellIndexFromMouse(mx, my) {
-  if (mx < 0 || mx >= GRID_SIZE || my < 0 || my >= GRID_SIZE) return -1;
-  const col = Math.floor(mx / CELL_SIZE);
-  const row = Math.floor(my / CELL_SIZE);
+  const lx = toLogical(mx);
+  const ly = toLogical(my);
+  if (lx < 0 || lx >= GRID_SIZE || ly < 0 || ly >= GRID_SIZE) return -1;
+  const col = Math.floor(lx / CELL_SIZE);
+  const row = Math.floor(ly / CELL_SIZE);
   return row * 3 + col;
 }
 
@@ -168,7 +191,9 @@ function cellTopLeft(index) {
 }
 
 function isOverButton(mx, my) {
-  return mx >= BTN_X && mx <= BTN_X + BTN_W && my >= BTN_Y && my <= BTN_Y + BTN_H;
+  const lx = toLogical(mx);
+  const ly = toLogical(my);
+  return lx >= BTN_X && lx <= BTN_X + BTN_W && ly >= BTN_Y && ly <= BTN_Y + BTN_H;
 }
 
 // =============================================================
